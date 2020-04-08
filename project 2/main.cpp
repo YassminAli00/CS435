@@ -33,7 +33,6 @@ Graph createRandomUnweightedGraphIter(int n){
         for(int j= i+1; j < n; j++){
             //generating random number between 0,false, and 1,true.
             int makeEdge= rand() % 2;
-            //if random number is 1 then we create an edge.
             if (makeEdge){
                 g.addUndirectedEdge(graphNodes[i], graphNodes[j]);
             }
@@ -45,7 +44,7 @@ Graph createRandomUnweightedGraphIter(int n){
 Graph createLinkedList(int n){
     Graph g;
     
-    //adding the nodes to graph g
+    //creating and adding nodes to LLS
     for(int i=0; i < n; i++){
         g.addNode(to_string(i));
     }
@@ -68,6 +67,7 @@ DirectedGraph createRandomDAGIter(int n){
     for(int i=0; i < n; i++){
         g.addNode(to_string(i));
     }
+    
     vector<Node*> graphNodes= g.getAllNodes();
     //creating random edges
     srand(time(0));
@@ -75,7 +75,7 @@ DirectedGraph createRandomDAGIter(int n){
         for(int j= 0; j < n; j++){
             //generating random number between 0,false, and 1,true.
             int makeEdge= rand() % 2;
-            //if random number is 1 then we create an edge.
+            
             if (makeEdge){
                 g.addDirectedEdge(graphNodes[i], graphNodes[j]);
             }

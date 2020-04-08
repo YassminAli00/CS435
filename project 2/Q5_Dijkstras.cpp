@@ -139,7 +139,7 @@ WeightedGraph createRandomCompleteWeightedGraph(int n){
 WeightedGraph createLinkedList(int n){
     WeightedGraph g;
     
-    //adding the nodes
+    //creating nodes, and adding them to the LL
     for(int i=0; i < n; i++){
         g.addNode(to_string(i));
     }
