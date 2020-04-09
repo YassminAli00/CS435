@@ -71,7 +71,6 @@ public:
 };
 
 
-//running time of this function can be improved to be log(n) if used minHeap
 //This function finds the node with minimum distance
 WNode* minDist(map<WNode*, int> distances, unordered_set<WNode*> visited){
     WNode* temp= nullptr;
@@ -100,8 +99,7 @@ map<WNode*, int> dijkstras(WNode* start){
         //neighbors here is a map<WNode*, int> where WNode* is the neighbor, and int is the edge weight
         for(const auto& neighbor : current->neighbors){
             if(!visited.count(neighbor.first)){
-                //adding the node and its distance to distances map if it is not already saved
-                //and make its distance infinity
+                //the distance is infinity if it is first time to be added to the map
                 if(!distances.count(neighbor.first)){
                     distances[neighbor.first]= INT_MAX;
                 }
@@ -169,7 +167,7 @@ void print(WeightedGraph g){
     }
 }
 
-/******************************* main *********************************/
+/******************************* main and test cases*********************************/
 
 int main() {
     /********** testing creating random weighted graph and running Dijakstra's on it ***********/
