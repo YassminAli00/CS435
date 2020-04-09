@@ -44,7 +44,7 @@ Graph createRandomUnweightedGraphIter(int n){
 Graph createLinkedList(int n){
     Graph g;
     
-    //creating and adding nodes to LLS
+    //creating and adding nodes to LL
     for(int i=0; i < n; i++){
         g.addNode(to_string(i));
     }
@@ -139,7 +139,7 @@ void BFTIterLinkedList(Graph graph){
 
 
 
-/************************************ main *************************************/
+/************************************ main and test cases *************************************/
 int main() {
     
     /******************** Question 3 testing **********************/

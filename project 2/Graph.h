@@ -215,7 +215,7 @@ public:
 };
 
 
-/******************************* Undirected Graph Class ********************************/
+/******************************* Directed Graph Class ********************************/
 class DirectedGraph{
     vector<Node*> allNodes;
 public:
@@ -225,7 +225,7 @@ public:
     }
     
     void addDirectedEdge(Node* first, Node* second){
-        //no double edges && no edge to itself
+        //no edge to itself
         if(first->value != second->value){
             first->neighbors.push_back(second);
             //after adding an edge check if first is reachable from second; a cycle found
@@ -239,7 +239,7 @@ public:
     //cycleFound is just a modified version of DFS.
     //it is based on the idea: if a path is found from second node to first, then there is a cycle in the graph
     bool cycleFound(Node* second, Node* first){
-        //reset the visited flag of all nodes in the graph to false before starting the search
+        //reset the visited flag of all nodes in the graph to false
         reset();
         
         stack<Node*> s;
@@ -247,7 +247,6 @@ public:
         s.push(second);
         while (!s.empty()){
             Node* newCurr= s.top();
-            //output.push_back(newCurr);
             s.pop();
             if(newCurr->value == first->value){
                 return true;
@@ -268,7 +267,7 @@ public:
                 int index= 0;
                 for (Node* neighbor :  n->neighbors){
                     if (neighbor->value == second->value){
-                        (n->neighbors).erase((n->neighbors).begin() + index); //erasing element from neighbors vector at index
+                        (n->neighbors).erase((n->neighbors).begin() + index);
                     }
                     index++;
                 }
@@ -283,7 +282,6 @@ public:
     bool edgeFound(Node* first, Node* second){
         for(Node* n : allNodes ){
             if( n->value == first->value)
-                //cout << n->value << " ";
                 for(Node* neighbor : n->neighbors){
                     if (neighbor->value == second->value){
                         cout << n->value << " " << neighbor->value << " " << second->value << endl;
@@ -327,7 +325,7 @@ public:
         for(auto const& i : degreesMap ){
             if(i.second == 0){
                 q.push(i.first);
-                //set the current value's in-degree to be -1 so that we don't add it back to the queue.
+                //set the current value's in-degree to -1
                 degreesMap[i.first]--;
             }
         }
@@ -366,7 +364,7 @@ public:
     }
     
     vector<Node*> mDFS(DirectedGraph graph){
-        //reset visited flage of all nodes to be false
+        //reset visited flage of all nodes to false
         graph.reset();
         
         stack<Node*> s;

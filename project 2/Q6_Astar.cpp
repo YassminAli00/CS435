@@ -100,8 +100,7 @@ GridGraph createRandomGridGraph(int n){
     vector<GridNode*> graphNodes= g.getAllNodes();
     //creating random edges
     srand(time(0));
-    
-    //genrating random edges with the four nodes surrounding the current node
+    //consider only the right and down nodes
     for(int i=0; i < graphNodes.size(); i++){
         
         if (i+1 < n){
@@ -159,11 +158,10 @@ map<GridNode*, pair<int, int>> astar(GridNode* origin, GridNode* dest){
         // Iterate over its neighbors, “relax” each neighbor:
         //neighbors here is a vector<GridNode*> where GridNode* is the neighbor
         for(auto neighbor : current->neighbors){
-            //checking if neighbor was visited already
             if(!finalized.count(neighbor)){
                 //adding the node and its distance to distances map if it is not already saved there
                 if(!distances.count(neighbor)){
-                    //if it is the first time to add i to distance map, make its distance g[v] infinity or INT_MAX
+                
                     distances[neighbor]= make_pair(INT_MAX, heuristic(neighbor, dest));
                 }
                 //we consider all edges to have a weight of 1 since it is unweighted graph
