@@ -254,7 +254,7 @@ public:
             for(Node* v : newCurr->neighbors){
                 if(!v->visited){
                     v->visited= true;
-                    s.push(v);
+                    s.push(v);/Users/yasminali/Downloads/Shamayem(after).mp4
                 }
             }
         }
@@ -304,6 +304,7 @@ public:
 class TopSort{
 public:
     
+/******************** Kahn's and its helper methods ******************************/
     map<Node*,int> getNodesDegrees(DirectedGraph g){
         
         vector<Node*> allNodes= g.getAllNodes();
@@ -352,6 +353,8 @@ public:
         return sortedOutput;
     }
     
+    
+/******************** mDFS and its helper methods ******************************/
     void mDFSHelper(stack<Node*> &s, Node* current){
         current->visited= true;
         

@@ -31,6 +31,7 @@ public:
     }
 };
 
+/************************** Weighted Graph Class ***********************/
 class WeightedGraph{
     vector<WNode*> allNodes;
 public:
@@ -71,6 +72,7 @@ public:
 };
 
 
+/************************** Dijkstra's and its helper functions ***********************/
 //This function finds the node with minimum distance
 WNode* minDist(map<WNode*, int> distances, unordered_set<WNode*> visited){
     WNode* temp= nullptr;
@@ -83,7 +85,6 @@ WNode* minDist(map<WNode*, int> distances, unordered_set<WNode*> visited){
     }
     return temp;
 }
-
 
 map<WNode*, int> dijkstras(WNode* start){
     unordered_set<WNode*>visited;
@@ -113,15 +114,16 @@ map<WNode*, int> dijkstras(WNode* start){
     
 }
 
-
+/*************************** Functions to create weighted graphs ***************************/
 WeightedGraph createRandomCompleteWeightedGraph(int n){
     WeightedGraph g;
     //creating nodes, and adding them to the graph
     for(int i=0; i < n; i++){
         g.addNode(to_string(i));
     }
+    
     vector<WNode*> graphNodes= g.getAllNodes();
-    //creating random edges
+    //creating random edges between nodes
     srand(time(0));
     for(int i=0; i < n; i++){
         for(int j= 0; j < n; j++){

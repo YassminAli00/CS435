@@ -1,4 +1,5 @@
 //
+//  main.cpp
 //  project2_Q6_GridGraph_A*
 //
 //  Created by Yasmin Ali on 4/1/20.
@@ -100,7 +101,8 @@ GridGraph createRandomGridGraph(int n){
     vector<GridNode*> graphNodes= g.getAllNodes();
     //creating random edges
     srand(time(0));
-    //consider only the right and down nodes
+    
+    //genrating random edges with the four nodes surrounding the current node
     for(int i=0; i < graphNodes.size(); i++){
         
         if (i+1 < n){
@@ -109,7 +111,6 @@ GridGraph createRandomGridGraph(int n){
                 g.addUndirectedEdge(graphNodes[i], graphNodes[i+1]);
             }
         }
-        
         if( i+n < pow(n,2)-1){
             int makeDownEdge= rand() % 2;
             if (makeDownEdge){
@@ -117,6 +118,20 @@ GridGraph createRandomGridGraph(int n){
             }
         }
         
+        if( i-n > 0){
+            int makeUpperEdge= rand() % 2;
+            if (makeUpperEdge){
+                g.addUndirectedEdge(graphNodes[i], graphNodes[i-n]);
+            }
+            
+        }
+        
+        if( i % n != 0){
+            int makeLeftEdge= rand() % 2;
+            if (makeLeftEdge){
+                g.addUndirectedEdge(graphNodes[i], graphNodes[i-1]);
+            }
+        }
     }
     return g;
 }
@@ -145,23 +160,26 @@ GridNode* mostPromisingAStar(map<GridNode*, pair<int, int>>& distances, unordere
 }
 
 
-map<GridNode*, pair<int, int>> astar(GridNode* origin, GridNode* dest){
+vector<GridNode*> astar(GridNode* origin, GridNode* dest){
     map<GridNode*, pair<int, int>> distances;
     unordered_set<GridNode*> finalized;
+    vector<GridNode*> output;
     
     GridNode* current= origin;
     distances[origin]= make_pair(0, heuristic(current, dest));
     bool found= false;
+    output.push_back(origin);
     
     while (current != dest && current != NULL){
         finalized.insert(current);
         // Iterate over its neighbors, “relax” each neighbor:
         //neighbors here is a vector<GridNode*> where GridNode* is the neighbor
         for(auto neighbor : current->neighbors){
+            //checking if neighbor was visited already
             if(!finalized.count(neighbor)){
                 //adding the node and its distance to distances map if it is not already saved there
                 if(!distances.count(neighbor)){
-                
+                    //if it is the first time to add i to distance map, make its distance g[v] infinity or INT_MAX
                     distances[neighbor]= make_pair(INT_MAX, heuristic(neighbor, dest));
                 }
                 //we consider all edges to have a weight of 1 since it is unweighted graph
@@ -172,6 +190,7 @@ map<GridNode*, pair<int, int>> astar(GridNode* origin, GridNode* dest){
             }
         }
         current= mostPromisingAStar(distances, finalized);
+        output.push_back(current);
         if(current==dest){
             found= true;
         }
@@ -180,7 +199,7 @@ map<GridNode*, pair<int, int>> astar(GridNode* origin, GridNode* dest){
     if(!found)
         return {};
     
-    return distances;
+    return output;
 }
 
 
@@ -209,9 +228,11 @@ int main() {
     GridNode* origin= allNodes[0];
     GridNode* dest= allNodes[lastIndex];
     
-    map<GridNode*, pair<int, int>> AStar_result= astar(origin, dest);
+    vector<GridNode*> AStar_result= astar(origin, dest);
+    if (AStar_result.size() == 0)
+        cout << "No path available. " << endl;
     for(auto i : AStar_result){
-        cout << i.first->value << ": " << "   d[v]:" << i.second.first << endl;
+        cout << i->value << endl;
     }
     return 0;
 }
