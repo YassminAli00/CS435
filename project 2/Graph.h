@@ -39,7 +39,7 @@ public:
     }
     
     void addUndirectedEdge(Node* first, Node* second){
-        if(edgeFound(first, second) == false){
+        if(edgeFound(first, second) == false){ //#checks for an existing edge?
             first->neighbors.push_back(second);
             
             if(first->value != second->value){
@@ -49,8 +49,8 @@ public:
         }
     }
     
-    void removeDirectedEdge(Node* first, Node* second){
-        for(Node* n : allNodes ){
+    void removeDirectedEdge(Node* first, Node* second){   //should be removeUndirectedEdge
+        for(Node* n : allNodes ){        //since you used auto const later on, best to be consistent 
             if(n->value == first->value){
                 int index= 0;
                 for (Node* neighbor :  n->neighbors){
@@ -131,7 +131,7 @@ public:
         //reset the visited flag of all nodes in the graph to false before starting the search
         g.reset();
         vector<Node*> output;
-        stack<Node*> s;
+        stack<Node*> s;            //small thing but consider calling it a nodestack instead of just s
         start->visited= true;
         s.push(start);
         while (!s.empty()){
