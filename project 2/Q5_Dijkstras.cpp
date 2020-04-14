@@ -22,7 +22,7 @@ using namespace std;
 struct WNode {
     string value;
     bool visited;
-    map<WNode*, int> neighbors; //int holds the weight of the edge between the node and the neighboring node
+    map<WNode*, int> neighbors; //int holds the weight of the edge between the node and the neighboring node //consider using an unordered_map
 public:
     WNode(string val= "") {
         value = val;
@@ -37,17 +37,17 @@ class WeightedGraph{
 public:
     void addNode(string nodeVal){
         WNode* temp= new WNode(nodeVal);
-        allNodes.push_back(temp);
+        allNodes.push_back(temp);  //check if node already exists on the list
     }
     
     void addDirectedEdge(WNode* first, WNode* second, int weight){
         //no edge to itself
-        if(first->value != second->value){
+        if(first->value != second->value){ //consider checking for dups in nieghbor list
             first->neighbors[second]= weight;
         }
     }
     
-    void removeDirectedEdge(WNode* first, WNode* second){
+    void removeDirectedEdge(WNode* first, WNode* second){ //consider an edgecase where the adjacent list is empty
         for(WNode* n : allNodes ){
             if(n->value == first->value){
                 for (auto const& neighbor :  n->neighbors){
@@ -63,7 +63,7 @@ public:
         return allNodes;
     }
     
-    void reset(){
+    void reset(){ //clears the visited flag for all nodes
         vector<WNode*> allNodes= getAllNodes();
         for( WNode* node: allNodes){
             node->visited= false;
@@ -93,13 +93,13 @@ map<WNode*, int> dijkstras(WNode* start){
     distances[start]= 0;
     WNode* current= start;
     
-    while (current != NULL){
-        
+    while (current != NULL){ 
+        //consider deleting  extra lines to tighten up the code.
         visited.insert(current);
         // Iterate over its neighbors, “relax” each neighbor:
         //neighbors here is a map<WNode*, int> where WNode* is the neighbor, and int is the edge weight
         for(const auto& neighbor : current->neighbors){
-            if(!visited.count(neighbor.first)){
+            if(!visited.count(neighbor.first)){ //consider using find() since count() will iterate the entire vector regardless of whether it finds the value
                 //the distance is infinity if it is first time to be added to the map
                 if(!distances.count(neighbor.first)){
                     distances[neighbor.first]= INT_MAX;
@@ -110,8 +110,7 @@ map<WNode*, int> dijkstras(WNode* start){
         }
         current= minDist(distances, visited);
     }
-    return distances;
-    
+    return distances;   
 }
 
 /*************************** Functions to create weighted graphs ***************************/
@@ -128,13 +127,12 @@ WeightedGraph createRandomCompleteWeightedGraph(int n){
     for(int i=0; i < n; i++){
         for(int j= 0; j < n; j++){
             //weight is a random number from 1 to 10
-            int weight= rand() % 10 + 1;
+            int weight= rand() % 10 + 1; //might cause issues as node count gets bigger, consider increasing the range for weight
             g.addDirectedEdge(graphNodes[i], graphNodes[j], weight);
         }
     }
     return g;
 }
-
 
 WeightedGraph createLinkedList(int n){
     WeightedGraph g;
