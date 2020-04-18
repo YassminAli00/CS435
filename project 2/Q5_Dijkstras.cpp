@@ -4,7 +4,6 @@
 //
 //  Created by Yasmin Ali on 3/30/20.
 
-
 #include <iostream>
 #include<vector>
 #include<string>
@@ -19,15 +18,35 @@
 
 using namespace std;
 
+/************************ weighted Node *************************/
 struct WNode {
+protected:
+    map<WNode*, int> neighbors; //int holds the weight of the edge between the node and the neighboring node
     string value;
     bool visited;
-    map<WNode*, int> neighbors; //int holds the weight of the edge between the node and the neighboring node
 public:
     WNode(string val= "") {
         value = val;
         visited= false;
         neighbors = {};
+    }
+    string getValue(){
+        return value;
+    }
+    bool getVisited(){
+        return visited;
+    }
+    void setVisited(bool v){
+        visited= v;
+    }
+    void addNeighbor(WNode* node, int weight){
+        neighbors[node]= weight;
+    }
+    void removeNeighbor(WNode* node){
+        neighbors.erase(node);
+    }
+    map<WNode*, int> getNeighbors(){
+        return neighbors;
     }
 };
 
@@ -41,18 +60,20 @@ public:
     }
     
     void addDirectedEdge(WNode* first, WNode* second, int weight){
+        if(first == NULL || second == NULL)
+            return;
         //no edge to itself
-        if(first->value != second->value){
-            first->neighbors[second]= weight;
+        if(first->getValue() != second->getValue()){
+            first->addNeighbor(second, weight);
         }
     }
     
     void removeDirectedEdge(WNode* first, WNode* second){
         for(WNode* n : allNodes ){
-            if(n->value == first->value){
-                for (auto const& neighbor :  n->neighbors){
-                    if (neighbor.first->value == second->value){
-                        n->neighbors.erase(neighbor.first);
+            if(n->getValue() == first->getValue()){
+                for (auto& neighbor :  n->getNeighbors()){
+                    if (neighbor.first->getValue() == second->getValue()){
+                        n->removeNeighbor(neighbor.first);
                     }
                 }
             }
@@ -62,23 +83,15 @@ public:
     vector<WNode*> getAllNodes(){
         return allNodes;
     }
-    
-    void reset(){
-        vector<WNode*> allNodes= getAllNodes();
-        for( WNode* node: allNodes){
-            node->visited= false;
-        }
-    }
 };
 
-
-/************************** Dijkstra's and its helper functions ***********************/
+//running time of this function can be improved to be log(n) if used minHeap
 //This function finds the node with minimum distance
 WNode* minDist(map<WNode*, int> distances, unordered_set<WNode*> visited){
     WNode* temp= nullptr;
     int minDist= INT_MAX;
-    for(auto const& i: distances){
-        if(!visited.count(i.first) && i.second <= minDist){
+    for(auto& i: distances){
+        if((visited.find(i.first) == visited.end()) && i.second <= minDist){
             minDist= i.second;
             temp= i.first;
         }
@@ -94,14 +107,14 @@ map<WNode*, int> dijkstras(WNode* start){
     WNode* current= start;
     
     while (current != NULL){
-        
         visited.insert(current);
         // Iterate over its neighbors, “relax” each neighbor:
-        //neighbors here is a map<WNode*, int> where WNode* is the neighbor, and int is the edge weight
-        for(const auto& neighbor : current->neighbors){
-            if(!visited.count(neighbor.first)){
-                //the distance is infinity if it is first time to be added to the map
-                if(!distances.count(neighbor.first)){
+        //getNeighbors() here returns a map<WNode*, int> where WNode* is the neighbor, and int is the edge weight
+        for(auto& neighbor : current->getNeighbors()){
+            if(visited.find(neighbor.first) == visited.end()){
+                //adding the node and its distance to distances map if it is not already saved
+                //and make its distance infinity
+                if(distances.find(neighbor.first) == distances.end()){
                     distances[neighbor.first]= INT_MAX;
                 }
                 int newDistance= min(distances[current] + neighbor.second, distances[neighbor.first]);
@@ -114,16 +127,14 @@ map<WNode*, int> dijkstras(WNode* start){
     
 }
 
-/*************************** Functions to create weighted graphs ***************************/
 WeightedGraph createRandomCompleteWeightedGraph(int n){
     WeightedGraph g;
     //creating nodes, and adding them to the graph
     for(int i=0; i < n; i++){
         g.addNode(to_string(i));
     }
-    
     vector<WNode*> graphNodes= g.getAllNodes();
-    //creating random edges between nodes
+    //creating random edges
     srand(time(0));
     for(int i=0; i < n; i++){
         for(int j= 0; j < n; j++){
@@ -135,23 +146,20 @@ WeightedGraph createRandomCompleteWeightedGraph(int n){
     return g;
 }
 
-
 WeightedGraph createLinkedList(int n){
     WeightedGraph g;
     
-    //creating nodes, and adding them to the LL
+    //adding the nodes
     for(int i=0; i < n; i++){
         g.addNode(to_string(i));
     }
     vector<WNode*> graphNodes= g.getAllNodes();
     WNode* current= new WNode();
     
-    for(int n=0; n < graphNodes.size(); n++){
+    for(int n=0; n < graphNodes.size()-1; n++){
         current= graphNodes[n];
-        if( n+1 < graphNodes.size()){
-            int weight= 1;
-            g.addDirectedEdge(current, graphNodes[n+1], weight);
-        }
+        int weight= 1;
+        g.addDirectedEdge(current, graphNodes[n+1], weight);
     }
     return g;
 }
@@ -160,17 +168,16 @@ void print(WeightedGraph g){
     vector <WNode*> allNodes= g.getAllNodes();
     
     for (WNode* n : allNodes){
-        cout<< n->value << " :{";
-        for(auto const& i : n->neighbors){
-            cout << "(" << i.first->value << ",";
+        cout<< n->getValue() << " :{";
+        for(auto& i : n->getNeighbors()){
+            cout << "(" << i.first->getValue() << ",";
             cout << i.second << "), ";
         }
         cout << "}" << endl;
     }
 }
 
-/******************************* main and test cases*********************************/
-
+/******************************* main *********************************/
 int main() {
     /********** testing creating random weighted graph and running Dijakstra's on it ***********/
     WeightedGraph g2= createRandomCompleteWeightedGraph(10);
@@ -183,8 +190,8 @@ int main() {
     map<WNode*, int>djPath= dijkstras( start);
     
     cout << endl << "Minimum distance from start to each node using Dijkstra's Alg. : " << endl;
-    for(const auto& i : djPath){
-        cout << i.first->value << ": " << i.second << endl;
+    for(auto& i : djPath){
+        cout << i.first->getValue() << ": " << i.second << endl;
     }
     
     cout << endl;
@@ -199,8 +206,8 @@ int main() {
     
     cout << "Minimum distance from start to each node using Dijkstra's Alg. : " << endl;
     map<WNode*, int>djPath_LL= dijkstras(start);
-    for(const auto& i : djPath_LL){
-        cout << i.first->value << ": " << i.second << endl;
+    for(auto& i : djPath_LL){
+        cout << i.first->getValue() << ": " << i.second << endl;
     }
     
     return 0;

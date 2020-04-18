@@ -19,8 +19,8 @@ using namespace std;
 
 /*************************** functions for Creating Graphs ******************************/
 
-Graph createRandomUnweightedGraphIter(int n){
-    Graph g;
+UndirectedGraph createRandomUnweightedGraphIter(int n){
+    UndirectedGraph g;
     //creating nodes
     for(int i=0; i < n; i++){
         g.addNode(to_string(i));
@@ -33,6 +33,7 @@ Graph createRandomUnweightedGraphIter(int n){
         for(int j= i+1; j < n; j++){
             //generating random number between 0,false, and 1,true.
             int makeEdge= rand() % 2;
+            //if random number is 1 then we create an edge.
             if (makeEdge){
                 g.addUndirectedEdge(graphNodes[i], graphNodes[j]);
             }
@@ -41,10 +42,9 @@ Graph createRandomUnweightedGraphIter(int n){
     return g;
 }
 
-Graph createLinkedList(int n){
-    Graph g;
-    
-    //creating and adding nodes to LL
+UndirectedGraph createLinkedList(int n){
+    UndirectedGraph g;
+    //adding the nodes to graph g
     for(int i=0; i < n; i++){
         g.addNode(to_string(i));
     }
@@ -52,11 +52,9 @@ Graph createLinkedList(int n){
     vector<Node*> graphNodes= g.getAllNodes();
     Node* current= new Node();
     
-    for(int n=0; n < graphNodes.size(); n++){
+    for(int n=0; n < graphNodes.size()-1; n++){
         current= graphNodes[n];
-        if( n+1 < graphNodes.size()){
-            g.addUndirectedEdge(current, graphNodes[n+1]);
-        }
+        g.addUndirectedEdge(current, graphNodes[n+1]);
     }
     return g;
 }
@@ -67,7 +65,6 @@ DirectedGraph createRandomDAGIter(int n){
     for(int i=0; i < n; i++){
         g.addNode(to_string(i));
     }
-    
     vector<Node*> graphNodes= g.getAllNodes();
     //creating random edges
     srand(time(0));
@@ -75,7 +72,7 @@ DirectedGraph createRandomDAGIter(int n){
         for(int j= 0; j < n; j++){
             //generating random number between 0,false, and 1,true.
             int makeEdge= rand() % 2;
-            
+            //if random number is 1 then we create an edge.
             if (makeEdge){
                 g.addDirectedEdge(graphNodes[i], graphNodes[j]);
             }
@@ -88,65 +85,54 @@ DirectedGraph createRandomDAGIter(int n){
 
 void printAdjLists(vector<Node*> allNodes){
     for (Node* n : allNodes){
-        cout<< n->value << " :{";
-        for(Node* neighbor : n->neighbors){
-            cout << neighbor->value << ",";
+        cout<< n->getValue() << " :{";
+        for(Node* neighbor : n->getNeighbors()){
+            cout << neighbor->getValue() << ",";
         }
         cout << "}" << endl;
     }
     cout << endl;
 }
-
-void printTraversalResult(vector<Node*> traversalOutput){
-    for (Node* no : traversalOutput){
-        cout<< no->value << ", ";
-    }
-    cout << endl;
-}
-
+//prints the values of nodes in a vector
 void print(vector<Node*> vec){
     for (Node* n : vec){
-        cout<< n->value << " ";
+        cout<< n->getValue() << " ";
     }
     cout << endl;
 }
-
+//prints the nodes of the graph and its adjacent list(neighbors list)
 void printGraph(DirectedGraph g){
     vector <Node*> allNodes= g.getAllNodes();
     for (Node* n : allNodes){
-        cout<< n->value << " :{";
-        for(Node* neighbor : n->neighbors){
-            cout << neighbor->value << ",";
+        cout<< n->getValue() << " :{";
+        for(Node* neighbor : n->getNeighbors()){
+            cout << neighbor->getValue() << ",";
         }
         cout << "}" << endl;
     }
 }
 
-
 /************************ linked list testing functions ************************/
-void BFTRecLinkedList(Graph graph){
+void BFTRecLinkedList(UndirectedGraph graph){
     GraphSearch S;
     vector<Node*> output=S.BFTRec(graph);
-    printTraversalResult(output);
+    print(output);
 }
 
-
-void BFTIterLinkedList(Graph graph){
+void BFTIterLinkedList(UndirectedGraph graph){
     GraphSearch S;
     vector<Node*> output=S.BFTIter(graph);
-    printTraversalResult(output);
+    print(output);
 }
 
-
-
-/************************************ main and test cases *************************************/
+/************************************ main *************************************/
 int main() {
     
     /******************** Question 3 testing **********************/
     /********** testing creating the undirected Graphs **************/
-    Graph g1= createRandomUnweightedGraphIter(7);
+    UndirectedGraph g1= createRandomUnweightedGraphIter(7);
     
-    Graph g2= createLinkedList(10);
+    UndirectedGraph g2= createLinkedList(10);
     
     cout << "Adj lists of random unweighted graph of size 7 nodes: " << endl;
     vector <Node*> allNodes1= g1.getAllNodes();
@@ -160,7 +146,7 @@ int main() {
     Node* first= new Node("5");
     Node* second= new Node("0");
     
-    g1.removeDirectedEdge(first, second);
+    g1.removeUnDirectedEdge(first, second);
     allNodes1= g1.getAllNodes();
     cout << "Removing edge between 0 and 5" << endl;
     cout << "Adj lists after removal: " << endl;
@@ -176,11 +162,11 @@ int main() {
     
     DFSOutput= S.DFSRec(allNodes1[0], target, g1);
     cout << "DFS Rec from 0 to 6 output: " << endl;
-    printTraversalResult(DFSOutput);
+    print(DFSOutput);
     
     DFSOutput= S.DFSIter(allNodes1[0], target, g1);
     cout << "DFS Iter from 0 to 6 output: " << endl;
-    printTraversalResult(DFSOutput);
+    print(DFSOutput);
     
     
     /*** tsting BFTRec and BFTIter ***/
@@ -188,15 +174,15 @@ int main() {
     
     BFTOutput= S.BFTRec(g1);
     cout << "BFT Rec output: " << endl;
-    printTraversalResult(BFTOutput);
+    print(BFTOutput);
     
     BFTOutput= S.BFTIter(g1);
     cout << "BFT Iter output: " << endl;
-    printTraversalResult(BFTOutput);
+    print(BFTOutput);
     
     /********** testing linked list graph *************/
     
-    Graph LinkedList= createLinkedList(10000);
+    UndirectedGraph LinkedList= createLinkedList(10000);
     cout << "BFT Iter on 10,000 size graph: " << endl;
     BFTIterLinkedList(LinkedList);
     cout << endl;
