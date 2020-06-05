@@ -9,6 +9,8 @@
 #include<algorithm>
 #include<vector>
 #include <chrono>
+#include "BST_AVL.h"
+
 
 
 /*********************************** main(testing BST and AVL)************************************/
