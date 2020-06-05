@@ -3,6 +3,7 @@ Project1 BST and AVL tree:
 
 part1 folder:  
 BST.h--> includes implementation of Binary Search Tree (BST) and all functions involved such as insertion, deletion and etc. both resursively and iteratively 
+
 BSTMain_testCase.cpp--> includes testing of BST implementaion 
 
 part2 folder: 
