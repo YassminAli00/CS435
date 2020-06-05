@@ -11,7 +11,7 @@ part2 folder:
 
 . BST_AVL.h--> includes implementation of Binary Search Tree (BST) and all functions involved 
 
-. main.cpp--> includes testing of BST and AVL implementations after modification and implementation of AVL tree
+. main.cpp--> includes testing of BST and AVL implementations 
 
 
 _____________________________________________________________________
